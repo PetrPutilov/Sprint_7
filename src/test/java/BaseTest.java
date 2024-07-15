@@ -3,6 +3,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import model.CancelOrderRequest;
 import model.CreateCourierRequest;
+import model.CreateOrderRequest;
 import model.LoginCourierRequest;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -43,9 +44,19 @@ public class BaseTest {
                 .delete("/api/v1/courier/{id}");
     }
 
-    @Step("cancel order")
-    public Response cancelOrder(CancelOrderRequest request) {
+    @Step("create order")
+    public Response createOrder(CreateOrderRequest request) {
         return given()
+                .header("Content-type", "application/json")
+                .and()
+                .body(request)
+                .when()
+                .post("/api/v1/orders");
+    }
+
+    @Step("cancel order")
+    public void cancelOrder(CancelOrderRequest request) {
+        given()
                 .header("Content-type", "application/json")
                 .and()
                 .body(request)

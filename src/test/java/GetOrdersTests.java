@@ -3,31 +3,21 @@ import io.restassured.response.Response;
 import model.CancelOrderRequest;
 import model.CreateOrderRequest;
 import model.CreateOrderResponse;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import model.GetOrdersResponse;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 
-public class CreateOrderTests extends BaseTest{
+public class GetOrdersTests extends BaseTest {
 
-    private static Stream<Arguments> provideColorLists() {
-        return Stream.of(
-                Arguments.of(List.of("BLACK")),
-                Arguments.of(List.of("GREY")),
-                Arguments.of(List.of("BLACK", "GREY")),
-                Arguments.of(List.of())
-        );
-    }
 
-    @ParameterizedTest
-    @MethodSource("provideColorLists")
-    @DisplayName("can create order")
-    public void createOrder(List<String> colors){
+    @Test
+    @DisplayName("can get orders")
+    public void canGetOrders() {
         //Given
         CreateOrderRequest createRequest = new CreateOrderRequest(
                 "Tireon",
@@ -38,12 +28,16 @@ public class CreateOrderTests extends BaseTest{
                 30,
                 OffsetDateTime.now().plusDays(3),
                 "A Lannister Always Pays His Debts",
-                colors
-                );
-        //When
+                List.of()
+        );
+
         Response createOrderResponse = createOrder(createRequest);
+
+        //When
+        GetOrdersResponse getOrdersResponseBody = given().get("/api/v1/orders").getBody().as(GetOrdersResponse.class);
         //Then
-        createOrderResponse.then().statusCode(201);
+        Assertions.assertNotNull(getOrdersResponseBody);
+        Assertions.assertFalse(getOrdersResponseBody.getOrders().isEmpty());
 
         //Clean
         CreateOrderResponse createOrderResponseBody = createOrderResponse.body().as(CreateOrderResponse.class);
