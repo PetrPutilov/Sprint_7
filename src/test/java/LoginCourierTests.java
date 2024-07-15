@@ -34,7 +34,7 @@ public class LoginCourierTests extends BaseTest{
         createCourier(createRequest);
 
         //When
-        Response loginResponse = loginCourier(new LoginCourierRequest(createRequest.getLogin(), null));
+        Response loginResponse = loginCourier(new LoginCourierRequest(null, createRequest.getPassword()));
 
         //Then
         loginResponse.then().statusCode(400);
