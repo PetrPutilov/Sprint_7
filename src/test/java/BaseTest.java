@@ -1,6 +1,7 @@
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import model.CancelOrderRequest;
 import model.CreateCourierRequest;
 import model.LoginCourierRequest;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,5 +41,15 @@ public class BaseTest {
                 .pathParam("id", courierId)
                 .when()
                 .delete("/api/v1/courier/{id}");
+    }
+
+    @Step("cancel order")
+    public Response cancelOrder(CancelOrderRequest request) {
+        return given()
+                .header("Content-type", "application/json")
+                .and()
+                .body(request)
+                .when()
+                .put("/api/v1/orders/cancel");
     }
 }
