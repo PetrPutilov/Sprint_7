@@ -7,6 +7,8 @@ import model.LoginCourierResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.Matchers.equalTo;
+
 public class CreateCourierTests extends BaseTest {
 
     @Test
@@ -17,7 +19,8 @@ public class CreateCourierTests extends BaseTest {
         //When
         Response createCourierResponse = createCourier(createRequest);
         //Then
-        createCourierResponse.then().statusCode(201);
+        createCourierResponse.then().statusCode(201)
+                .and().assertThat().body("ok", equalTo(true));
 
         //Clean
         LoginCourierResponse loginResponse = loginCourier(new LoginCourierRequest(createRequest.getLogin(), createRequest.getPassword())).body().as(LoginCourierResponse.class);
@@ -33,7 +36,8 @@ public class CreateCourierTests extends BaseTest {
         //When
         Response createCourierResponse = createCourier(createRequest);
         //Then
-        createCourierResponse.then().statusCode(409);
+        createCourierResponse.then().statusCode(409)
+                .and().assertThat().body("message", equalTo("Этот логин уже используется"));
 
         //Clean
         LoginCourierResponse loginResponse = loginCourier(new LoginCourierRequest(createRequest.getLogin(), createRequest.getPassword())).body().as(LoginCourierResponse.class);
@@ -50,7 +54,8 @@ public class CreateCourierTests extends BaseTest {
         //When
         Response createCourierResponse = createCourier(createSameLoginRequest);
         //Then
-        createCourierResponse.then().statusCode(409);
+        createCourierResponse.then().statusCode(409)
+                .and().assertThat().body("message", equalTo("Этот логин уже используется"));
 
         //Clean
         LoginCourierResponse loginResponse = loginCourier(new LoginCourierRequest(createRequest.getLogin(), createRequest.getPassword())).body().as(LoginCourierResponse.class);
@@ -65,7 +70,8 @@ public class CreateCourierTests extends BaseTest {
         //When
         Response createCourierResponse = createCourier(createRequest);
         //Then
-        createCourierResponse.then().statusCode(400);
+        createCourierResponse.then().statusCode(400)
+                .and().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"));
 
         //Clean
         Response loginResponse = loginCourier(new LoginCourierRequest(createRequest.getLogin(), createRequest.getPassword()));

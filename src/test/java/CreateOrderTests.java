@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class CreateOrderTests extends BaseTest{
 
@@ -43,7 +44,8 @@ public class CreateOrderTests extends BaseTest{
         //When
         Response createOrderResponse = createOrder(createRequest);
         //Then
-        createOrderResponse.then().statusCode(201);
+        createOrderResponse.then().statusCode(201)
+                .and().body("track", notNullValue());
 
         //Clean
         CreateOrderResponse createOrderResponseBody = createOrderResponse.body().as(CreateOrderResponse.class);

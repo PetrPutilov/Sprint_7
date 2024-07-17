@@ -6,6 +6,9 @@ import model.LoginCourierResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+
 public class LoginCourierTests extends BaseTest{
 
     @Test
@@ -19,7 +22,8 @@ public class LoginCourierTests extends BaseTest{
         Response loginResponse = loginCourier(new LoginCourierRequest(createRequest.getLogin(), createRequest.getPassword()));
 
         //Then
-        loginResponse.then().statusCode(200);
+        loginResponse.then().statusCode(200)
+                .and().body("id", notNullValue());
 
         //Clean
         LoginCourierResponse loginResponseBody = loginResponse.body().as(LoginCourierResponse.class);
@@ -37,7 +41,8 @@ public class LoginCourierTests extends BaseTest{
         Response loginResponse = loginCourier(new LoginCourierRequest(null, createRequest.getPassword()));
 
         //Then
-        loginResponse.then().statusCode(400);
+        loginResponse.then().statusCode(400)
+                .and().assertThat().body("message", equalTo("Недостаточно данных для входа"));
 
         //Clean
         LoginCourierResponse loginResponseBody = loginCourier(new LoginCourierRequest(createRequest.getLogin(), createRequest.getPassword())).body().as(LoginCourierResponse.class);
@@ -55,7 +60,8 @@ public class LoginCourierTests extends BaseTest{
         Response loginResponse = loginCourier(new LoginCourierRequest("stark", createRequest.getPassword()));
 
         //Then
-        loginResponse.then().statusCode(404);
+        loginResponse.then().statusCode(404)
+                .and().assertThat().body("message", equalTo("Учетная запись не найдена"));
 
         //Clean
         LoginCourierResponse loginResponseBody = loginCourier(new LoginCourierRequest(createRequest.getLogin(), createRequest.getPassword())).body().as(LoginCourierResponse.class);
@@ -70,7 +76,8 @@ public class LoginCourierTests extends BaseTest{
         Response loginResponse = loginCourier(new LoginCourierRequest("lanister", "45678"));
 
         //Then
-        loginResponse.then().statusCode(404);
+        loginResponse.then().statusCode(404)
+                .and().assertThat().body("message", equalTo("Учетная запись не найдена"));
 
     }
 
