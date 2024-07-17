@@ -1,20 +1,14 @@
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.response.Response;
-import model.CancelOrderRequest;
-import model.CreateOrderRequest;
-import model.CreateOrderResponse;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class CreateOrderTests extends BaseTest{
+public class CreateOrderTests extends BaseOrderTest{
 
     private static Stream<Arguments> provideColorLists() {
         return Stream.of(
@@ -30,25 +24,11 @@ public class CreateOrderTests extends BaseTest{
     @DisplayName("can create order")
     public void createOrder(List<String> colors){
         //Given
-        CreateOrderRequest createRequest = new CreateOrderRequest(
-                "Tireon",
-                "Lannister",
-                "Winterfell, 12",
-                "dragonfleet",
-                "+489567678",
-                30,
-                OffsetDateTime.now().plusDays(3),
-                "A Lannister Always Pays His Debts",
-                colors
-                );
+        createRequest.setColor(colors);
         //When
-        Response createOrderResponse = createOrder(createRequest);
+        createOrderResponse = createOrder(createRequest);
         //Then
         createOrderResponse.then().statusCode(201)
                 .and().body("track", notNullValue());
-
-        //Clean
-        CreateOrderResponse createOrderResponseBody = createOrderResponse.body().as(CreateOrderResponse.class);
-        cancelOrder(new CancelOrderRequest(createOrderResponseBody.getTrack()));
     }
 }
