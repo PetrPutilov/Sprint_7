@@ -1,19 +1,18 @@
+import api.client.OrdersClient;
 import io.qameta.allure.Step;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import model.CancelOrderRequest;
 import model.CreateOrderRequest;
 import model.CreateOrderResponse;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
-
 public class BaseOrderTest extends BaseTest{
+
+    private final OrdersClient ordersClient = new OrdersClient();
 
     protected CreateOrderRequest createRequest;
 
@@ -42,21 +41,11 @@ public class BaseOrderTest extends BaseTest{
 
     @Step("create order")
     public Response createOrder(CreateOrderRequest request) {
-        return given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(request)
-                .when()
-                .post("/api/v1/orders");
+        return ordersClient.createOrder(request);
     }
 
     @Step("cancel order")
     public void cancelOrder(CancelOrderRequest request) {
-        given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(request)
-                .when()
-                .put("/api/v1/orders/cancel");
+        ordersClient.cancelOrder(request);
     }
 }
